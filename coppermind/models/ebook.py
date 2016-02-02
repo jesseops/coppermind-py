@@ -12,8 +12,7 @@ class Ebook:
     """
 
     def __init__(self, **ebook_data):
-        for k, v in ebook_data.items():
-            self.__dict__[k] = v  # quickly set all attrs, rewrite once model stabilizes
+        self._metadata = ebook_data
 
     @classmethod
     def from_dict(self, ebook_data):
@@ -36,4 +35,10 @@ class Ebook:
         Return an easily storable representation of an `Ebook` object
         Should be able to rehydrate from serialized data
         """
-        return self.__dict__
+        return self._metadata
+
+    def __getattr__(self, attr):
+        try:
+            return self._metadata[attr]
+        except KeyError as e:
+            raise AttributeError("{} has no attribute {}".format(self, e))

@@ -1,3 +1,4 @@
+import os
 import logging
 import unittest
 from coppermind.models import Ebook
@@ -17,6 +18,7 @@ class testEbook(unittest.TestCase):
     on the ebook and validate action succeeds
     """
     db = None  # For DB testing
+    sample_ebook = os.path.join(os.path.dirname(__file__), 'sample_ebooks/peter_pan.epub')
 
     def test_from_dict(self):
         ebook = Ebook.from_dict(fake_ebook)
@@ -33,7 +35,7 @@ class testEbook(unittest.TestCase):
         self.assertEqual(serialized, fake_ebook)
 
     def test_from_file(self):
-        ebook = Ebook.from_file('./tests/sample_ebooks/peter_pan.epub')
+        ebook = Ebook.from_file(self.sample_ebook)
         self.assertIsInstance(ebook, Ebook)
 
     def test_db(self):

@@ -39,11 +39,12 @@ def _epub_parser(epub):
                 k = 'author'
                 v = v['#text']
             if 'identifier' in k:  # Required element, needs additional parsing
+                k = 'identifiers'
                 if not isinstance(v, list):
                     v = [v]  # Just in case we get a single element
-                identifiers = {}
+                identifiers = []
                 for i in v:
-                    identifiers[i['@opf:scheme']] = i['#text']  # Support multiple identifiers
+                    identifiers.append({'identifier': i['@opf:scheme'], 'value': i['#text']})  # Support multiple identifiers
                 v = identifiers
             metadata[k.replace('dc:', '')] = v
     return metadata
