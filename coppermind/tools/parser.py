@@ -3,6 +3,10 @@ import xmltodict
 from zipfile import ZipFile
 
 
+class MissingEbookFile(Exception):
+    pass
+
+
 def ebook_parser(ebook_file, fmt='EPUB'):
     """
     Given an ebook file, parse metadata and return as dict
@@ -11,8 +15,9 @@ def ebook_parser(ebook_file, fmt='EPUB'):
         if fmt != 'EPUB':
             raise NotImplementedError('EPUB only for now')
         return _epub_parser(ebook_file)
-
-    raise Exception
+    else:
+        raise MissingEbookFile("{} was not found, current path: {}".format(ebook_file, os.curdir))
+    raise Exception("Why did I get here?")
 
 
 def _epub_parser(epub):
