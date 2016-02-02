@@ -6,6 +6,9 @@ class Ebook:
     """
     Should contain all knowledge about a given ebook and
     operations available for ebooks
+
+    Actual ebook file should be stored in DB with a UUID which allows returning
+    the file when required. It isn't necessary to keep the ebook in memory
     """
 
     def __init__(self, **ebook_data):
