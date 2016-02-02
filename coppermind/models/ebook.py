@@ -29,7 +29,7 @@ class Ebook:
         Metadata should be parsed and everything passed back into the object appropriately
         """
         metadata = ebook_parser(ebook_file)
-        return Ebook(**metadata, ebook_file=ebook_file)
+        return Ebook(ebook_file=ebook_file, **metadata)
 
     def serialize(self):
         """
