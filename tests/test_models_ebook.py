@@ -31,7 +31,7 @@ class testEbook(unittest.TestCase):
         self.assertEqual(serialized, fake_ebook)
 
     def test_from_file(self):
-        ebook = Ebook.from_file('./sample.epub')
+        ebook = Ebook.from_file('./sample_ebooks/peter_pan.epub')
         self.assertIsInstance(ebook, Ebook)
 
 
