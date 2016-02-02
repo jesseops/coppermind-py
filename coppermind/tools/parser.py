@@ -1,10 +1,19 @@
 import os
+import hashlib
 import xmltodict
 from zipfile import ZipFile
 
 
 class MissingEbookFile(Exception):
     pass
+
+
+def file_hash(path):
+    sha256 = hashlib.sha256()
+    with open(path, 'rb') as data:
+        for chunk in iter(lambda: data.read(4096), b""):
+                sha256.update(chunk)
+    return sha256.hexdigest()
 
 
 def ebook_parser(ebook_file, fmt='EPUB'):
@@ -28,6 +37,7 @@ def _epub_parser(epub):
     An EPUB must contain META-INF/container.xml, which contains the path to
     the EPUB metadata file.
     """
+    sha256 = file_hash(epub)
     zf = ZipFile(epub)
     xml = xmltodict.parse(zf.read('META-INF/container.xml'))
     metadata_path = xml['container']['rootfiles']['rootfile']['@full-path']  # TODO: validate this is true for all EPUBs
@@ -47,4 +57,5 @@ def _epub_parser(epub):
                     identifiers.append({'identifier': i['@opf:scheme'], 'value': i['#text']})  # Support multiple identifiers
                 v = identifiers
             metadata[k.replace('dc:', '')] = v
+    metadata['identifiers'].append({'identifier': 'sha256', 'value': sha256})
     return metadata

@@ -1,19 +1,25 @@
 import unittest
+import hashlib
 from coppermind.db.mongo import Mongo
 from coppermind.models.ebook import Ebook
+from coppermind.tools.parser import file_hash
 from . import test_models_ebook
+
 
 class test_DB_Mongo(test_models_ebook.testEbook):
 
     db = Mongo()
 
     def test_ebook(self):
+        sha256 = file_hash(self.sample_ebook)
         ebook = Ebook.from_file(self.sample_ebook)
         ebook_id = self.db.save_ebook(ebook, path=self.sample_ebook)
 
         new_ebook = self.db.get_ebook(ebook_id)
         self.assertEqual(new_ebook.author, ebook.author)
         self.assertIsNotNone(self.db.get_ebook_file(new_ebook.storage['mongo']))
+        self.assertIsNotNone(self.db.get_ebook_file(sha256))
+
 
 
 if __name__ == "__main__":
