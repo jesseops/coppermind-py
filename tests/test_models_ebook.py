@@ -2,6 +2,7 @@ import os
 import logging
 import unittest
 from coppermind.models import Ebook
+from coppermind.tools.parser import file_hash
 
 
 fake_ebook = {"title": 'FooBar',
@@ -41,8 +42,23 @@ class testEbook(unittest.TestCase):
     def test_db(self):
         if not self.db:
             raise unittest.SkipTest('DB tests will only run if DB is set')
-        self.assertIsNotNone(self.db)
+        sha256 = file_hash(self.sample_ebook)
+        ebook = Ebook.from_file(self.sample_ebook)
+        ebook_id = self.db.save_ebook(ebook, path=self.sample_ebook)
 
+        new_ebook = self.db.get_ebook(ebook_id)
+        self.assertEqual(new_ebook.author, ebook.author)
+        self.assertIsNotNone(self.db.get_ebook_file(new_ebook.storage['mongo']))
+        self.assertIsNotNone(self.db.get_ebook_file(sha256))
+
+    def test_duplicate(self):
+        if not self.db:
+            raise unittest.SkipTest('DB tests will only run if DB is set')
+        ebook = Ebook.from_file(self.sample_ebook)
+        self.db.save_ebook(ebook, path=self.sample_ebook)
+        with self.assertRaises(Exception):
+            ebook2 = Ebook.from_file(self.sample_ebook)
+            self.db.save_ebook(ebook2, path=self.sample_ebook)
 
 if __name__ == "__main__":
     unittest.main()

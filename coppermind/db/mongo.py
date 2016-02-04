@@ -26,9 +26,9 @@ class Mongo(BaseDB):
                         ebook_bin = Binary(data_file.read())
                     else:
                         raise NotImplementedError('Only epub supported for now')
-                    self._connection.data_files.insert({'sha256': sha256,
-                                                        'file': ebook_bin,
-                                                        'timestamp': datetime.utcnow()})
+                    self._connection.data_files.insert_one({'sha256': sha256,
+                                                            'file': ebook_bin,
+                                                            'timestamp': datetime.utcnow()})
         return sha256
 
     def save_ebook_metadata(self, ebook):
@@ -36,7 +36,7 @@ class Mongo(BaseDB):
             mongo_uuid = str(uuid.uuid4())
             ebook['identifiers'].append({'identifier': 'coppermind_id', 'value': mongo_uuid})
             ebook['uuid'] = mongo_uuid
-        self._connection.metadata.update({'uuid': mongo_uuid}, {'$set': ebook}, upsert=True)
+        self._connection.metadata.update_one({'uuid': mongo_uuid}, {'$set': ebook}, upsert=True)
         return mongo_uuid
 
     def get_ebook(self, identifier):
