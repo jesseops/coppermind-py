@@ -79,5 +79,10 @@ def _mobi_parser(mobi):
         file_type = f.read(8)
         if file_type.decode() != 'BOOKMOBI':
             raise InvalidEbookFile('File at {} is not a valid MOBI'.format(mobi))
+        # Check header length
         f.seek(0)
         header = f.read(1024)
+        length = struct.unpack_from('>L', header, 0x14)[0]
+        exth = header[(length + 16):]
+        ext_length, num_items = struct.unpack('>LL', exth[4:12])
+        print(exth)
