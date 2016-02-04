@@ -76,7 +76,8 @@ def _mobi_parser(mobi):
     """
     with open(mobi, 'rb') as f:
         f.seek(60)
-        if f.read(8) != 'BOOKMOBI':
+        file_type = f.read(8)
+        if file_type.decode() != 'BOOKMOBI':
             raise InvalidEbookFile('File at {} is not a valid MOBI'.format(mobi))
         f.seek(0)
         header = f.read(1024)

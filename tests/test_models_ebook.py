@@ -2,7 +2,7 @@ import os
 import logging
 import unittest
 from coppermind.models import Ebook
-from coppermind.tools.parser import file_hash
+from coppermind.tools.parser import file_hash, _mobi_parser, InvalidEbookFile
 
 
 fake_ebook = {"title": 'FooBar',
@@ -65,6 +65,11 @@ class testEbook(unittest.TestCase):
         with self.assertRaises(Exception):
             ebook2 = Ebook.from_file(self.sample_ebook)
             self.db.save_ebook(ebook2, path=self.sample_ebook)
+
+    def test_mobi(self):
+        with self.assertRaises(InvalidEbookFile):
+            _mobi_parser(self.sample_ebook)
+        _mobi_parser(self.sample_ebook.replace('epub', 'mobi'))
 
 if __name__ == "__main__":
     unittest.main()
