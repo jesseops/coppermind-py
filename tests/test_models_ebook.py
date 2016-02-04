@@ -39,16 +39,22 @@ class testEbook(unittest.TestCase):
         ebook = Ebook.from_file(self.sample_ebook)
         self.assertIsInstance(ebook, Ebook)
 
-    def test_db(self):
+    def test_save_ebook(self):
         if not self.db:
             raise unittest.SkipTest('DB tests will only run if DB is set')
-        sha256 = file_hash(self.sample_ebook)
         ebook = Ebook.from_file(self.sample_ebook)
         ebook_id = self.db.save_ebook(ebook, path=self.sample_ebook)
 
         new_ebook = self.db.get_ebook(ebook_id)
         self.assertEqual(new_ebook.author, ebook.author)
         self.assertIsNotNone(self.db.get_ebook_file(new_ebook.storage['mongo']))
+
+    def test_get_ebook(self):
+        if not self.db:
+            raise unittest.SkipTest('DB tests will only run if DB is set')
+        sha256 = file_hash(self.sample_ebook)
+        ebook = Ebook.from_file(self.sample_ebook)
+        ebook_id = self.db.save_ebook(ebook, path=self.sample_ebook)
         self.assertIsNotNone(self.db.get_ebook_file(sha256))
 
     def test_duplicate(self):

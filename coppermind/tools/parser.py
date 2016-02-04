@@ -21,7 +21,7 @@ def ebook_parser(ebook_file, fmt='EPUB'):
     Given an ebook file, parse metadata and return as dict
     """
     if os.path.exists(ebook_file):
-        if fmt != 'EPUB':
+        if fmt.upper() != 'EPUB':
             raise NotImplementedError('EPUB only for now')
         return _epub_parser(ebook_file)
     else:
