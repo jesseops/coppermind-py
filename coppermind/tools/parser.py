@@ -1,10 +1,15 @@
 import os
+import sys
+import struct
 import hashlib
 import xmltodict
 from zipfile import ZipFile
 
 
 class MissingEbookFile(Exception):
+    pass
+
+class InvalidEbookFile(Exception):
     pass
 
 
@@ -23,7 +28,8 @@ def ebook_parser(ebook_file, fmt='EPUB'):
     if os.path.exists(ebook_file):
         if fmt.upper() != 'EPUB':
             raise NotImplementedError('EPUB only for now')
-        return _epub_parser(ebook_file)
+        fmt_parser = getattr(sys.modules[__name__], '_{}_parser'.format(fmt.lower()))
+        return fmt_parser(ebook_file)
     else:
         raise MissingEbookFile("{} was not found, current path: {}".format(ebook_file, os.curdir))
     raise Exception("Why did I get here?")
@@ -56,6 +62,21 @@ def _epub_parser(epub):
                 for i in v:
                     identifiers.append({'identifier': i['@opf:scheme'], 'value': i['#text']})  # Support multiple identifiers
                 v = identifiers
-            metadata[k.replace('dc:', '')] = v
+            metadata[k.split('dc:')[-1]] = v
     metadata['identifiers'].append({'identifier': 'sha256', 'value': sha256})
     return metadata
+
+def _mobi_parser(mobi):
+    """
+    MOBI specific parsing
+    Check first if valid Mobipocket file, then parse out metadata
+
+    Easiest method is to seek to byte 60 and read the next 8 bytes
+    Should be the string 'BOOKMOBI'
+    """
+    with open(mobi, 'rb') as f:
+        f.seek(60)
+        if f.read(8) != 'BOOKMOBI':
+            raise InvalidEbookFile('File at {} is not a valid MOBI'.format(mobi))
+        f.seek(0)
+        header = f.read(1024)
