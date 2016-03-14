@@ -6,6 +6,9 @@ import xmltodict
 from zipfile import ZipFile
 
 
+__supported_formats__ = ['EPUB']  # TODO: Should pick from installed parsers
+
+
 class MissingEbookFile(Exception):
     pass
 
@@ -26,8 +29,8 @@ def ebook_parser(ebook_file, fmt='EPUB'):
     Given an ebook file, parse metadata and return as dict
     """
     if os.path.exists(ebook_file):
-        if fmt.upper() != 'EPUB':
-            raise NotImplementedError('EPUB only for now')
+        if fmt.upper() not in __supported_formats__:
+            raise NotImplementedError('{} not yet implemented'.format(fmt.upper()))
         fmt_parser = getattr(sys.modules[__name__], '_{}_parser'.format(fmt.lower()))
         return fmt_parser(ebook_file)
     else:
