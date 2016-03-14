@@ -36,4 +36,13 @@ class Coppermind():
             raise Exception("Failed to get config!")
 
     def setup_logging(self):
-        pass
+        log = logging.getLogger(__name__)
+        log.setLevel(getattr(logging, self.svc.config.logging.level.upper()))
+
+        file_handler = logging.FileHandler(self.svc.config.logging.filename)
+        stream_handler = logging.StreamHandler()
+
+        log.addHandler(file_handler)
+        log.addHandler(stream_handler)
+        logging.root = log
+        logging.debug("Logging Setup Complete")
