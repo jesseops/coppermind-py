@@ -2,7 +2,8 @@ import os
 import sys
 import logging
 from time import sleep
-from coppermind.tools import SVC, SVCObj, Config
+from figgypudding import Pudding
+from coppermind.tools import SVC, SVCObj
 
 
 class Coppermind():
@@ -26,14 +27,7 @@ class Coppermind():
 
     def setup_config(self):
         filename = "coppermind.conf"
-        paths = ['/etc', '.', '..', '../..']
-        for p in paths:
-            if os.path.exists(os.path.join(p, filename)):
-                self.svc.config = Config(os.path.join(p, filename))
-                self.svc.config.refresh()
-                break
-        else:
-            raise Exception("Failed to get config!")
+        config = Pudding.from_file(filename)
 
     def setup_logging(self):
         log = logging.getLogger(__name__)
