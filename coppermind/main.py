@@ -1,8 +1,8 @@
 import os
 import sys
+import yact
 import logging
 from time import sleep
-from figgypudding import Pudding
 from coppermind.tools import SVC, SVCObj
 
 
@@ -27,7 +27,7 @@ class Coppermind():
 
     def setup_config(self):
         filename = "coppermind.conf"
-        config = Pudding.from_file(filename)
+        config = yact.from_file(filename)
 
     def setup_logging(self):
         log = logging.getLogger(__name__)
