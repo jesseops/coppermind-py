@@ -1,1 +1,1 @@
-from .main import Coppermind
+from .webservice import app as CoppermindWS
