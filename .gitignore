@@ -2,4 +2,5 @@
 *.mobi
 *.epub
 coppermind.conf
+*.idea
 .idea
