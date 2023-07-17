@@ -1,5 +1,4 @@
 from flask import Flask, jsonify
-from coppermind.common import
 
 app = Flask(__name__.split('.')[0])
 PORT = 9090
