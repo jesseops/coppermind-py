@@ -18,7 +18,7 @@ class BaseDB(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def get_ebook_file(self, uuid):
+    def get_ebook_file(self, ebook_id):
         """
         Return actual ebook file by UUID
         """

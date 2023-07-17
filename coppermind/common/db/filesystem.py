@@ -39,7 +39,7 @@ class Filesystem(BaseDB):
         pass
 
     def get_ebook(self, identifier):
-        
+
         data = self._connection.metadata.find_one({'identifiers.value': identifier}, {'_id': 0})
         if data:
             return Ebook.from_dict(data)

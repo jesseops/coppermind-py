@@ -28,6 +28,7 @@ class Coppermind():
     def setup_config(self):
         filename = "coppermind.conf"
         config = yact.from_file(filename)
+        self.svc.config = config
 
     def setup_logging(self):
         log = logging.getLogger(__name__)

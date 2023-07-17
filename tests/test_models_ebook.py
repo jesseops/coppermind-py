@@ -56,6 +56,7 @@ class testEbook(unittest.TestCase):
         ebook = Ebook.from_file(self.sample_ebook)
         ebook_id = self.db.save_ebook(ebook, path=self.sample_ebook)
         self.assertIsNotNone(self.db.get_ebook_file(sha256))
+        self.assertIsNotNone(self.db.get_ebook_file(ebook_id))
 
     def test_duplicate(self):
         if not self.db:

@@ -49,7 +49,8 @@ def _epub_parser(epub):
     sha256 = file_hash(epub)
     zf = ZipFile(epub)
     xml = xmltodict.parse(zf.read('META-INF/container.xml'))
-    metadata_path = xml['container']['rootfiles']['rootfile']['@full-path']  # TODO: validate this is true for all EPUBs
+    # TODO: validate this is true for all EPUBs
+    metadata_path = xml['container']['rootfiles']['rootfile']['@full-path']
     raw_metadata = xmltodict.parse(zf.read(metadata_path))
     metadata = {'format': 'epub'}
     for k, v in raw_metadata['package']['metadata'].items():
@@ -63,7 +64,8 @@ def _epub_parser(epub):
                     v = [v]  # Just in case we get a single element
                 identifiers = []
                 for i in v:
-                    identifiers.append({'identifier': i['@opf:scheme'], 'value': i['#text']})  # Support multiple identifiers
+                    # Support multiple identifiers
+                    identifiers.append({'identifier': i['@opf:scheme'], 'value': i['#text']})
                 v = identifiers
             metadata[k.split('dc:')[-1]] = v
     metadata['identifiers'].append({'identifier': 'sha256', 'value': sha256})

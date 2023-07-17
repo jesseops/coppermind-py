@@ -17,5 +17,3 @@ Once I have all the basics complete, I may also add in the concept of profiles t
 __ http://brandonsanderson.com/
 
 .. _Mistborn: http://brandonsanderson.com/books/mistborn/
-
-

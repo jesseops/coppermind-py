@@ -47,4 +47,3 @@ class Mongo(BaseDB):
 
     def search_ebooks(self, **query):
         raise NotImplementedError
-
