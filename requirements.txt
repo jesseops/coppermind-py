@@ -1,4 +1,3 @@
-pymongo
 xmltodict
 yact
 flask
