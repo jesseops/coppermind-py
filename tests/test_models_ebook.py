@@ -1,8 +1,8 @@
 import os
 import logging
 import unittest
-from coppermind.models import Ebook
-from coppermind.tools.parser import file_hash, _mobi_parser, InvalidEbookFile
+from coppermind.common.models import Ebook
+from coppermind.common.tools.parser import file_hash, _mobi_parser, InvalidEbookFile
 
 
 fake_ebook = {"title": 'FooBar',
