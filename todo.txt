@@ -1,0 +1,5 @@
+(A) Setup GitPod configuration
+Bootstrap test ebooks (gutenberg?)
+Ebook storage
+Email ebook to address (eg, load to Kindle)
+(B) Setup repository automation

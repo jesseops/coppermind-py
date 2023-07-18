@@ -3,7 +3,9 @@ import sys
 import yact
 import logging
 from time import sleep
-from coppermind.tools import SVC, SVCObj
+from ..common.tools import SVC, SVCObj
+from ..common.db.filesystem import FileSystem
+from .threads.watch_directory import WatchDirectory
 
 
 class Coppermind():
@@ -21,22 +23,37 @@ class Coppermind():
     def run(self):
         self.setup_config()
         self.setup_logging()
+        self.setup_db()
+        self._dir_watcher = WatchDirectory()
+        self._dir_watcher.start()
         while not self.svc.shutdown:
             sleep(1)
+        self._dir_watcher.join(1)
 
+    def setup_db(self):
+        self.svc.db = FileSystem()
 
     def setup_config(self):
         filename = "coppermind.conf"
         config = yact.from_file(filename)
+        self.svc.config = config
 
     def setup_logging(self):
         log = logging.getLogger(__name__)
-        log.setLevel(getattr(logging, self.svc.config.logging.level.upper()))
+        log.setLevel(getattr(logging, self.svc.config.get('logging.level').upper()))
+        logformat = logging.Formatter(fmt='%(asctime)s [%(levelname)s] (%(threadName)-10s) %(message)s',
+                                      datefmt='%Y-%m-%d %H:%M:%S')
 
-        file_handler = logging.FileHandler(self.svc.config.logging.filename)
         stream_handler = logging.StreamHandler()
-
-        log.addHandler(file_handler)
+        stream_handler.setFormatter(logformat)
         log.addHandler(stream_handler)
+        try:
+            file_handler = logging.FileHandler(self.svc.config['logging.filename'])
+            file_handler.setFormatter(logformat)
+            log.addHandler(file_handler)
+        except KeyError:
+            log.info("No logfile configured, skipping persistent log output")
+        logging.root.handlers.clear()
         logging.root = log
-        logging.debug("Logging Setup Complete")
+        log.addHandler(stream_handler)
+        log.debug("Logging Setup Complete")

@@ -1,8 +1,9 @@
 import os
 import logging
 import unittest
-from coppermind.models import Ebook
-from coppermind.tools.parser import file_hash, _mobi_parser, InvalidEbookFile
+from coppermind.common.db.filesystem import Filesystem
+from coppermind.common.models import Ebook
+from coppermind.common.tools.parser import file_hash, _mobi_parser, InvalidEbookFile
 
 
 fake_ebook = {"title": 'FooBar',
@@ -56,6 +57,7 @@ class testEbook(unittest.TestCase):
         ebook = Ebook.from_file(self.sample_ebook)
         ebook_id = self.db.save_ebook(ebook, path=self.sample_ebook)
         self.assertIsNotNone(self.db.get_ebook_file(sha256))
+        self.assertIsNotNone(self.db.get_ebook_file(ebook_id))
 
     def test_duplicate(self):
         if not self.db:

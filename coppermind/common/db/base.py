@@ -2,12 +2,14 @@ import uuid
 import logging
 from abc import ABCMeta, abstractmethod
 
+from ..tools import SVCObj
+
 
 class EbookNotFound(Exception):
     pass
 
 
-class BaseDB(metaclass=ABCMeta):
+class BaseDB(SVCObj, metaclass=ABCMeta):
     """
     Base for all DB classes. Defines a standard interface
     allowing multiple DB implementations without requiring
@@ -16,9 +18,15 @@ class BaseDB(metaclass=ABCMeta):
     Unittests for any DB implementation should simply be
     running the ebook unittest against that implementation
     """
+    @property
+    def config(self):
+        """
+        Return database configuration
+        """
+        return self.svc.config['db']
 
     @abstractmethod
-    def get_ebook_file(self, uuid):
+    def get_ebook_file(self, ebook_id):
         """
         Return actual ebook file by UUID
         """
@@ -31,9 +39,7 @@ class BaseDB(metaclass=ABCMeta):
 
     def save_ebook(self, ebook, **kwargs):
         data_file = self.store_ebook_file(fmt=ebook.format, **kwargs)
-        metadata = ebook.serialize()
-        metadata['storage'] = {'mongo': data_file}
-        ebook_uuid = self.save_ebook_metadata(metadata)
+        ebook_uuid = self.save_ebook_metadata(ebook=ebook)
         return ebook_uuid
 
     @abstractmethod
