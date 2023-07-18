@@ -6,7 +6,7 @@ import xmltodict
 from zipfile import ZipFile
 
 
-__supported_formats__ = ['EPUB']  # TODO: Should pick from installed parsers
+__supported_formats__ = ['EPUB', 'MOBI']  # TODO: Should pick from installed parsers
 
 
 class MissingEbookFile(Exception):
@@ -24,17 +24,20 @@ def file_hash(path):
     return sha256.hexdigest()
 
 
-def ebook_parser(ebook_file, fmt='EPUB'):
+def ebook_parser(ebook_file, fmt=None):
     """
     Given an ebook file, parse metadata and return as dict
     """
-    if os.path.exists(ebook_file):
-        if fmt.upper() not in __supported_formats__:
-            raise NotImplementedError('{} not yet implemented'.format(fmt.upper()))
-        fmt_parser = getattr(sys.modules[__name__], '_{}_parser'.format(fmt.lower()))
-        return fmt_parser(ebook_file)
-    else:
+    if not os.path.exists(ebook_file):
         raise MissingEbookFile("{} was not found, current path: {}".format(ebook_file, os.curdir))
+    if fmt is None:
+        fmt = ebook_file.split('.')[-1].lower()
+    if fmt.upper() not in __supported_formats__:
+        raise NotImplementedError('{} not yet implemented'.format(fmt.upper()))
+    fmt_parser = getattr(sys.modules[__name__], '_{}_parser'.format(fmt.lower()))
+    parsed = fmt_parser(ebook_file)
+    parsed.update({'format': fmt.lower(), 'sha256sum': file_hash(ebook_file), 'path': ebook_file})
+    return parsed
     raise Exception("Why did I get here?")
 
 
@@ -52,7 +55,7 @@ def _epub_parser(epub):
     # TODO: validate this is true for all EPUBs
     metadata_path = xml['container']['rootfiles']['rootfile']['@full-path']
     raw_metadata = xmltodict.parse(zf.read(metadata_path))
-    metadata = {'format': 'epub'}
+    metadata = {}
     for k, v in raw_metadata['package']['metadata'].items():
         if 'dc:' in k:
             if 'creator' in k:  # Required element, needs additional parsing

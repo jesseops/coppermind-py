@@ -1,6 +1,7 @@
 import os
 import logging
 import unittest
+from coppermind.common.db.filesystem import Filesystem
 from coppermind.common.models import Ebook
 from coppermind.common.tools.parser import file_hash, _mobi_parser, InvalidEbookFile
 

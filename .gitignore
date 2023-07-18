@@ -7,3 +7,10 @@ coppermind.conf
 .coverage
 coverage.xml
 test-results.xml
+junit
+htmlcov
+*_cache
+__pycache__
+.tox
+*.egg-info
+dist
