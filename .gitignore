@@ -4,3 +4,6 @@
 coppermind.conf
 *.idea
 .idea
+.coverage
+coverage.xml
+test-results.xml

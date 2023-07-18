@@ -1,1 +1,1 @@
-from .main import Coppermind
+from .daemon import Coppermind

@@ -3,7 +3,7 @@ import sys
 import yact
 import logging
 from time import sleep
-from coppermind.tools import SVC, SVCObj
+from coppermind.common.tools import SVC, SVCObj
 
 
 class Coppermind():

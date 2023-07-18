@@ -11,3 +11,4 @@ vscode:
     - Vue.volar
     - EditorConfig.EditorConfig
     - davraamides.todotxt-mode
+    - ms-python.python
